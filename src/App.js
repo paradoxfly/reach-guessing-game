@@ -18,7 +18,8 @@ import {
   WaitForTurn,
   PlayTurn,
   Timeout,
-  SeeWinner
+  SeeWinner,
+  PasteContractInfo
 } from './views/';
 
 const reach = loadStdlib('ALGO');
@@ -26,8 +27,101 @@ reach.setWalletFallback(reach.walletFallback( { providerEnv: 'TestNet', MyAlgoCo
 const { standardUnit } = reach;
 
 function App() {
-  const [ view, setView ] = useState(views.SEE_WINNER);
+  const [ view, setView ] = useState(views.CONNECT_ACCOUNT);
+  const [ account, setAccount ] = useState({});
   const [ isAlice, setIsAlice ] = useState(true);
+  const [ resolver, setResolver ] = useState();
+  const [ contractInfo, setContractInfo ] = useState("");
+  const [ wager, setWager ] = useState();
+
+  const helperFunctions = {
+    connect: async (secret, mnemonic = false) => {
+      let result = ""
+      try {
+        const account = mnemonic ? await reach.newAccountFromMnemonic(secret) : await reach.getDefaultAccount();
+        setAccount(account);
+        setView(views.DEPLOY_OR_ATTACH);
+        result = 'success';
+      } catch (error) {
+        result = 'failed';
+      }
+      return result;
+    },
+
+    setAsDeployer: (deployer = true) => {
+      if(deployer){
+        setIsAlice(true);
+        setView(views.SET_WAGER);
+      }
+      else{
+        setIsAlice(false);
+        setView(views.PASTE_CONTRACT_INFO);
+      }
+    },
+
+    deploy: async (wager) => {
+      const contract = account.contract(backend);
+      const deadline = {ETH: 10, ALGO: 100, CFX: 1000}[reach.connector];
+      Alice.wager = reach.parseCurrency(wager);
+      Alice.deadline = deadline;
+      backend.Alice(contract, Alice);
+      setView(views.DEPLOYING);
+      setContractInfo( JSON.stringify(await contract.getInfo(), null, 2) );
+    },
+
+    attach: (contractInfo) => {
+      const contract = account.contract(backend, JSON.parse(contractInfo));
+      backend.Bob(contract, Bob)
+    }
+  };
+
+  const Player = {
+    random: () => reach.hasRandom.random(),
+
+    informNewRound: () => {
+      setView(views.WAIT_FOR_TURN);
+    },
+  
+    getRandom: () => {
+      const random = Math.floor(Math.random()*5);
+      console.log("random", random)
+      return random;
+    }
+  }
+
+  const Alice = {
+    ...Player,
+
+    wager: 0,
+
+    deadline: 0,
+  
+    setWagerAndDeadline: ( wager, deadline) => {
+      this.wager = wager;
+      this.deadline = deadline;
+    },
+  
+    waitingForAttacher: () => {
+      setView(views.WAIT_FOR_ATTACHER);
+    }
+  }
+
+  const Bob = {
+    ...Player,
+
+    acceptWager: async (wager) => {
+      setView(views.ACCEPT_WAGER);
+      setWager(reach.formatCurrency(wager, 4));
+      return new Promise((resolve) => {
+        setResolver({
+          resolve: () => {
+            setView(views.ATTACHING);
+            resolve();
+          },
+        })
+      });
+    }
+  }
 
 
   return (
@@ -39,17 +133,17 @@ function App() {
       
       {
         view === views.CONNECT_ACCOUNT &&
-        <ConnectAccount />
+        <ConnectAccount connect={helperFunctions.connect}/>
       }
 
       {
         view === views.DEPLOY_OR_ATTACH &&
-        <DeployOrAttach />
+        <DeployOrAttach setAsDeployer={helperFunctions.setAsDeployer}/>
       }
 
       {
         view === views.SET_WAGER &&
-        <SetWager />
+        <SetWager deploy={helperFunctions.deploy}/>
       }
 
       {
@@ -59,12 +153,17 @@ function App() {
 
       {
         view === views.WAIT_FOR_ATTACHER &&
-        <WaitForAttacher />
+        <WaitForAttacher contractInfo={contractInfo}/>
+      }
+
+      {
+        view === views.PASTE_CONTRACT_INFO && 
+        <PasteContractInfo attach={helperFunctions.attach}/>
       }
 
       {
         view === views.ACCEPT_WAGER &&
-        <AcceptWager />
+        <AcceptWager wager={wager} standardUnit={standardUnit} accept={resolver.resolve} decline={() => setView(views.DEPLOY_OR_ATTACH)}/>
       }
 
       {

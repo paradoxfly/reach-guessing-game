@@ -58,6 +58,7 @@ const Player = {
   getHand: Fun([], UInt),
   seeOutcome: Fun([UInt], Null),
   informTimeout: Fun([], Null),
+  informNewRound: Fun([], Null),
   getRandom: Fun([], UInt),
 };
 
@@ -66,7 +67,7 @@ export const main = Reach.App(() => {
     ...Player,
     wager: UInt, // atomic units of currency
     deadline: UInt, // time delta (blocks/rounds)
-    
+    waitingForAttacher: Fun([], Null)
   });
   const Bob   = Participant('Bob', {
     ...Player,
@@ -89,6 +90,8 @@ export const main = Reach.App(() => {
     .pay(wager);
   commit();
 
+  Alice.interact.waitingForAttacher();
+
 
   Bob.only(() => {
     interact.acceptWager(wager);
@@ -105,6 +108,9 @@ export const main = Reach.App(() => {
 
   while ((hand1!= random && hand2 != random) && (stage > 0)) {
     commit();
+
+    Bob.interact.informNewRound();
+    Alice.interact.informNewRound();
 
     Alice.only(() => {
       const _handAlice = interact.getHand();

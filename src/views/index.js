@@ -9,3 +9,4 @@ export * from "./WaitForTurn";
 export * from "./PlayTurn";
 export * from "./Timeout";
 export * from "./SeeWinner";
+export * from "./PasteContractInfo";

@@ -8,6 +8,7 @@ const views = {
     WAIT_FOR_ATTACHER: 'Wait for attacher',
     
     //Attach
+    PASTE_CONTRACT_INFO: 'Paste contract info',
     ACCEPT_WAGER: 'Accept wager',
     ATTACHING: 'Attaching',
 

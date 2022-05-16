@@ -1,9 +1,13 @@
-export function DeployOrAttach(){
+export function DeployOrAttach({ setAsDeployer }){
     return(
         <div>
-            <button>Deploy new contract</button><br/>
+            <button
+                onClick={() => setAsDeployer()}
+            >Deploy new contract</button><br/>
             <h2>Or</h2>
-            <button>Attach to already existing contract</button>
+            <button
+                onClick={() => setAsDeployer(false)}
+            >Attach to already existing contract</button>
         </div>
     );
 };

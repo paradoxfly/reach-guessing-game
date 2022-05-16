@@ -1,11 +1,22 @@
-export function ConnectAccount(){
+import { useState } from "react";
+
+
+export function ConnectAccount({connect}){
+    const [ secret, setSecret ] = useState('');
+
     return(
         <div>
-            <button>Connect To MyAlgoConnect Wallet</button>
+            <button onClick={() => connect()}>Connect To MyAlgoConnect Wallet</button>
             <hr />
             <div className="mnemonic">
-                <textarea placeholder="Paste Mnemonic Key"/><br/>
-                <button>Connect</button>
+                <textarea 
+                    placeholder="Paste Mnemonic Key"
+                    onChange={ e => setSecret(e.target.value) }
+                />
+                <br/>
+                <button
+                    onClick={() => connect(secret, true)}
+                >Connect</button>
             </div>
         </div>
     );
