@@ -28,6 +28,9 @@ const { standardUnit } = reach;
 
 function App() {
   const [ view, setView ] = useState(views.CONNECT_ACCOUNT);
+  const [ guess, setGuess ] = useState(0);
+  const [ outcome, setOutcome ] = useState();
+  const [ playedTurn, setPlayedTurn ] = useState(false);
   const [ account, setAccount ] = useState({});
   const [ isAlice, setIsAlice ] = useState(true);
   const [ resolver, setResolver ] = useState();
@@ -79,13 +82,25 @@ function App() {
     random: () => reach.hasRandom.random(),
 
     informNewRound: () => {
-      setView(views.WAIT_FOR_TURN);
+      setView(views.PLAY_TURN);
+      setPlayedTurn(false);
+      setResolver();
     },
   
     getRandom: () => {
       const random = Math.floor(Math.random()*5);
-      console.log("random", random)
+      console.log("random", random);
       return random;
+    },
+
+    seeOutcome: (outcomeHex) => {
+      const outcome = parseInt(outcomeHex);
+      setOutcome(outcome)
+      setView(views.SEE_WINNER)
+    },
+
+    informTimeout: () => {
+      setView(views.TIME_OUT);
     }
   }
 
@@ -103,6 +118,16 @@ function App() {
   
     waitingForAttacher: () => {
       setView(views.WAIT_FOR_ATTACHER);
+    },
+
+    getHand: async () => {
+      return new Promise(resolve => {
+        setResolver({
+          resolve: () => {
+            resolve(guess);
+          },
+        })
+      })
     }
   }
 
@@ -120,6 +145,21 @@ function App() {
           },
         })
       });
+    },
+
+    getHand: async () => {
+      console.log(playedTurn);
+      if(playedTurn){
+        return guess;
+      } else {
+        return new Promise(resolve => {
+          setResolver({
+            resolve: () => {
+              resolve(guess);
+            },
+          })
+        })
+      }
     }
   }
 
@@ -130,6 +170,10 @@ function App() {
       <div className='topnav'>
         <h1>Price Is Right</h1>
       </div>
+
+      {
+        playedTurn && <h3>You played {guess}</h3>
+      }
       
       {
         view === views.CONNECT_ACCOUNT &&
@@ -178,7 +222,16 @@ function App() {
 
       {
         view === views.PLAY_TURN && 
-        <PlayTurn />
+        <PlayTurn 
+          guess={(hand) => setGuess(hand)} 
+          played={() => {
+            console.log('played')
+            setPlayedTurn(true);
+            setView(views.WAIT_FOR_TURN)
+          }} 
+          isAlice={isAlice} 
+          resolver={resolver}
+        />
       }
 
       {
@@ -188,7 +241,7 @@ function App() {
 
       {
         view === views.SEE_WINNER &&
-        <SeeWinner />
+        <SeeWinner outcome={outcome} isAlice={isAlice}/>
       }
     </div>
   );

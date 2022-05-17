@@ -56,9 +56,18 @@ input{
   font-size: 19px;
 }
 
+small{
+  color: red;
+  font-size: 15px;
+}
+
 .animate{
   animation: text 2s infinite;
   text-transform: capitalize;
+}
+
+.error{
+  border: 1px solid red;
 }
 
 @keyframes text {
