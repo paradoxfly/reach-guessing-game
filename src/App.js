@@ -27,8 +27,8 @@ reach.setWalletFallback(reach.walletFallback( { providerEnv: 'TestNet', MyAlgoCo
 const { standardUnit } = reach;
 
 function App() {
-  const [ view, setView ] = useState(views.PLAY_TURN);
-  const [ guess, setGuess ] = useState(5);
+  const [ view, setView ] = useState(views.CONNECT_ACCOUNT);
+  const [ guess, setGuess ] = useState(undefined);
   const [ round, setRound ] = useState(0);
   const [ outcome, setOutcome ] = useState();
   const [ getHand, setGetHand ] = useState(false);
