@@ -62,7 +62,7 @@ $btn-shadow--success: rgba(0,208,0,.5);
     padding: 20px 30px 20px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    background: teal;
+    background-color: #020887;
 }
 .modal-icon {
     display: block;
@@ -86,11 +86,13 @@ $btn-shadow--success: rgba(0,208,0,.5);
 }
 .modal-bottom {
     display: flex;
+    justify-content: center;
+    align-content: center;
     flex-wrap: wrap;
     padding: 15px 55px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    background: teal;
+    background: #020887;
 }
 .modal-btn {
     margin: 10px auto;

@@ -1,8 +1,12 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+
+  background-color: #f5e6e8;
+
+  font-family: "https://fonts.google.com/specimen/Lato";
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* background: url(https://dl.dropboxusercontent.com/s/v3m6p0p5kq6xzkz/100daysui_100bg.png) no-repeat, #303540;

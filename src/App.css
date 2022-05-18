@@ -17,8 +17,10 @@
 .topnav{
   margin-bottom: 80px;
   font-size: 30px;
-  background-color: teal;
-  color: aliceblue;
+  /* background-color: teal; */
+  background-color: #192A51;
+  /* color: aliceblue; */
+  color: white;
 }
 
 button {
@@ -62,7 +64,8 @@ small{
 }
 
 .animate{
-  animation: text 2s infinite;
+  /* animation: text 2s infinite; */
+  color: #020887;
   text-transform: capitalize;
 }
 
@@ -70,18 +73,33 @@ small{
   border: 1px solid red;
 }
 
+.timeout-img{
+  width: 100px;
+}
+
+.timeout{
+  font-size: 60px;
+  animation: text 2s infinite;
+}
+
+.guess{
+  position: fixed;
+  left: 40%;
+  font-size: 22px;
+  font-weight: 600;
+}
 @keyframes text {
   0%{
-      color: #EA4335;
+      color: #a9dbb8;
       /* transform: translateX(1px) */
   }
   33%{
-      color: #4285f4;
+      color: #7ca5b8;
   }
   66%{
-      color: #34A853;
+      color: #38369a;
   }
   100%{
-      color: #ad850c;
+      color: #020887;
   }
 }

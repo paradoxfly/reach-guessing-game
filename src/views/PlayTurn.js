@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export function PlayTurn({guess, played, isAlice, resolver}){
+export function PlayTurn({guess, played, round}){
     const [ hand, setHand ] = useState(0);
     const [ error, setError ] = useState(false)
 
@@ -17,13 +17,17 @@ export function PlayTurn({guess, played, isAlice, resolver}){
 
     const handleSubmit = () => {
         guess(hand);
-        resolver?.resolve(hand);
         played();
     }
 
     return(
         <div>
-            <h3>Guess a number between 0 and 10</h3>
+            {
+                round <= 1  ? 
+                    <h3>Guess a number between 0 and 10</h3> :
+                    <h3>Wrong Guess: Guess Again!</h3>
+            }
+            
             <input 
                 className={ error ? 'error' : ' ' }
                 type="number" 
@@ -36,7 +40,7 @@ export function PlayTurn({guess, played, isAlice, resolver}){
             <br />
             { 
                 error &&
-                <small>Your guess can't be more than 10 or less than 0</small> 
+                <small>Your guess must be between 0 and 10</small> 
             }
         </div>
     )

@@ -15,7 +15,7 @@ export function ConnectAccount({connect}){
                 />
                 <br/>
                 <button
-                    onClick={() => connect(secret, true)}
+                    onClick={() => connect(secret.trim(), true)}
                 >Connect</button>
             </div>
         </div>

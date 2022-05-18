@@ -4,7 +4,7 @@ import { ALGO_MyAlgoConnect as MyAlgoConnect } from '@reach-sh/stdlib';
 
 import './App.css';
 import { views } from './helpers/constants.js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 //views
 import { 
@@ -27,9 +27,11 @@ reach.setWalletFallback(reach.walletFallback( { providerEnv: 'TestNet', MyAlgoCo
 const { standardUnit } = reach;
 
 function App() {
-  const [ view, setView ] = useState(views.CONNECT_ACCOUNT);
-  const [ guess, setGuess ] = useState(0);
+  const [ view, setView ] = useState(views.PLAY_TURN);
+  const [ guess, setGuess ] = useState(5);
+  const [ round, setRound ] = useState(0);
   const [ outcome, setOutcome ] = useState();
+  const [ getHand, setGetHand ] = useState(false);
   const [ playedTurn, setPlayedTurn ] = useState(false);
   const [ account, setAccount ] = useState({});
   const [ isAlice, setIsAlice ] = useState(true);
@@ -75,14 +77,31 @@ function App() {
     attach: (contractInfo) => {
       const contract = account.contract(backend, JSON.parse(contractInfo));
       backend.Bob(contract, Bob)
+    },
+
+    guess: (hand) => {
+      setGuess(hand)
+    },
+
+    played: () => {
+      setPlayedTurn(true);
+      setView(views.WAIT_FOR_TURN)
+    },
+
+    playAgain: () => {
+      setView(views.DEPLOY_OR_ATTACH);
+      setRound(0);
     }
+
   };
 
   const Player = {
     random: () => reach.hasRandom.random(),
 
     informNewRound: () => {
+      setRound(round => round + 1);
       setView(views.PLAY_TURN);
+      setGuess(undefined);
       setPlayedTurn(false);
       setResolver();
     },
@@ -101,6 +120,17 @@ function App() {
 
     informTimeout: () => {
       setView(views.TIME_OUT);
+    },
+
+    getHand: async () => {
+      setGetHand(true);
+      return new Promise(resolve => {
+        setResolver({
+          resolve: (hand) => {
+            resolve(hand);
+          },
+        })
+      })
     }
   }
 
@@ -119,16 +149,6 @@ function App() {
     waitingForAttacher: () => {
       setView(views.WAIT_FOR_ATTACHER);
     },
-
-    getHand: async () => {
-      return new Promise(resolve => {
-        setResolver({
-          resolve: () => {
-            resolve(guess);
-          },
-        })
-      })
-    }
   }
 
   const Bob = {
@@ -146,22 +166,14 @@ function App() {
         })
       });
     },
-
-    getHand: async () => {
-      console.log(playedTurn);
-      if(playedTurn){
-        return guess;
-      } else {
-        return new Promise(resolve => {
-          setResolver({
-            resolve: () => {
-              resolve(guess);
-            },
-          })
-        })
-      }
-    }
   }
+
+  useEffect(()=>{
+    if(getHand && playedTurn){
+      resolver.resolve(guess);
+      setGetHand(false);
+    }
+  }, [getHand, playedTurn, guess, resolver])
 
 
   return (
@@ -170,10 +182,6 @@ function App() {
       <div className='topnav'>
         <h1>Price Is Right</h1>
       </div>
-
-      {
-        playedTurn && <h3>You played {guess}</h3>
-      }
       
       {
         view === views.CONNECT_ACCOUNT &&
@@ -217,20 +225,21 @@ function App() {
 
       {
         view === views.WAIT_FOR_TURN &&
-        <WaitForTurn />
+        <>
+          {
+            guess !== undefined && <h3 className='guess'>You played {guess}</h3>
+          }
+          <WaitForTurn />
+        </>
+        
       }
 
       {
         view === views.PLAY_TURN && 
         <PlayTurn 
-          guess={(hand) => setGuess(hand)} 
-          played={() => {
-            console.log('played')
-            setPlayedTurn(true);
-            setView(views.WAIT_FOR_TURN)
-          }} 
-          isAlice={isAlice} 
-          resolver={resolver}
+          guess={helperFunctions.guess} 
+          played={helperFunctions.played}
+          round={round}
         />
       }
 
@@ -241,7 +250,7 @@ function App() {
 
       {
         view === views.SEE_WINNER &&
-        <SeeWinner outcome={outcome} isAlice={isAlice}/>
+        <SeeWinner outcome={outcome} isAlice={isAlice} playAgain={helperFunctions.playAgain}/>
       }
     </div>
   );
