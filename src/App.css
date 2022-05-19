@@ -31,12 +31,14 @@ button {
   margin: 10px;
   cursor: pointer;
   font-size: 15px;
+  transition: 1s;
 }
 
 button:hover{
   background-color: antiquewhite;
   color: #282c34;
 }
+
 
 textarea{
   width: 400px;

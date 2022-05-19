@@ -1,6 +1,6 @@
 import './loser.css';
 
-export default function Loser(){
+export default function Loser({playAgain}){
     return(
         <div>
             <p>You lose</p>
@@ -15,6 +15,7 @@ export default function Loser(){
                 <div class='mouth'></div>
             </div>
             </div>
+            <button className='playagainloser' onClick={playAgain}>Play Again</button>
         </div>
     )
 }

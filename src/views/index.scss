@@ -1,0 +1,54 @@
+// @import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
+
+.card-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 1px;
+    padding: 0px ;
+
+    .card {
+        transition: 0.4s;
+        cursor: pointer;
+        position: relative;
+        flex: 40%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-width: 120px;
+        height: 170px;
+        margin: 15px auto;
+        padding: 12px;
+        background: #000;
+        background: linear-gradient(
+            40deg,
+            #38369a 0%,
+            #020887 45%,
+            #7ca5b8 100%
+        );
+        border-radius: 10px;
+        box-shadow: 0 15px 60px rgba(0, 0, 0, 0.5);
+        .content{
+            color: white;
+            font-size: 40px;
+        }
+
+        &.selected{
+            transform: scale(114%);
+            z-index: 100;
+            background: #020887;
+            border: 3px solid #7c9a36;
+            .content{
+                color: white;
+                font-size: 50px;
+            }
+        }
+    }
+    
+    .card:hover {
+        transform: scale(108%);
+        filter: brightness(55%);
+    }
+}
+
